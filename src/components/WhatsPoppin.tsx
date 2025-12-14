@@ -8,8 +8,20 @@ import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import SubmitHiddenGemModal from "./SubmitHiddenGemModal";
+import CategoryVenuesModal from "./CategoryVenuesModal";
+import type { Database } from "@/integrations/supabase/types";
+import type { LucideIcon } from "lucide-react";
 
-const categories = [
+type VenueCategory = Database["public"]["Enums"]["venue_category"];
+
+interface Category {
+  icon: LucideIcon;
+  title: string;
+  description: string;
+  key: VenueCategory | "trending";
+}
+
+const categories: Category[] = [
   {
     icon: Wine,
     title: "Bars & Nightlife",
@@ -63,26 +75,40 @@ const categories = [
 const WhatsPoppin = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [showGemModal, setShowGemModal] = useState(false);
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<{
+    icon: LucideIcon;
+    title: string;
+    key: VenueCategory;
+  } | null>(null);
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
 
-  const handleCategoryClick = (category: typeof categories[0]) => {
-    if (category.key === "hidden_gems") {
-      if (!user) {
-        toast({
-          title: "Sign in to share",
-          description: "Create an account to submit hidden gems.",
-        });
-        navigate("/auth");
-      } else {
-        setShowGemModal(true);
-      }
-    } else {
+  const handleCategoryClick = (category: Category) => {
+    if (category.key === "trending") {
       toast({
         title: `🔥 ${category.title}`,
         description: "Coming soon! Stay tuned for the hottest spots.",
       });
+      return;
     }
+
+    if (category.key === "hidden_gems" && !user) {
+      toast({
+        title: "Sign in to share",
+        description: "Create an account to submit hidden gems.",
+      });
+      navigate("/auth");
+      return;
+    }
+
+    // Open category modal to browse venues
+    setSelectedCategory({
+      icon: category.icon,
+      title: category.title,
+      key: category.key as VenueCategory,
+    });
+    setShowCategoryModal(true);
   };
 
   const handleSignOut = async () => {
@@ -179,6 +205,13 @@ const WhatsPoppin = () => {
 
       {/* Hidden Gem Submission Modal */}
       <SubmitHiddenGemModal open={showGemModal} onOpenChange={setShowGemModal} />
+
+      {/* Category Venues Modal */}
+      <CategoryVenuesModal
+        open={showCategoryModal}
+        onOpenChange={setShowCategoryModal}
+        category={selectedCategory}
+      />
     </div>
   );
 };
