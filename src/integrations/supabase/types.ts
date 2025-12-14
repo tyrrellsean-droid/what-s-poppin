@@ -14,7 +14,83 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      venue_visits: {
+        Row: {
+          id: string
+          user_latitude: number | null
+          user_longitude: number | null
+          venue_id: string
+          visited_at: string
+        }
+        Insert: {
+          id?: string
+          user_latitude?: number | null
+          user_longitude?: number | null
+          venue_id: string
+          visited_at?: string
+        }
+        Update: {
+          id?: string
+          user_latitude?: number | null
+          user_longitude?: number | null
+          venue_id?: string
+          visited_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "venue_visits_venue_id_fkey"
+            columns: ["venue_id"]
+            isOneToOne: false
+            referencedRelation: "venues"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      venues: {
+        Row: {
+          address: string | null
+          category: Database["public"]["Enums"]["venue_category"]
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          is_hidden_gem: boolean | null
+          latitude: number
+          longitude: number
+          name: string
+          traffic_count: number | null
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          category: Database["public"]["Enums"]["venue_category"]
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_hidden_gem?: boolean | null
+          latitude: number
+          longitude: number
+          name: string
+          traffic_count?: number | null
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          category?: Database["public"]["Enums"]["venue_category"]
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_hidden_gem?: boolean | null
+          latitude?: number
+          longitude?: number
+          name?: string
+          traffic_count?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +99,14 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      venue_category:
+        | "bars_nightlife"
+        | "comedy"
+        | "food_dining"
+        | "places_to_stay"
+        | "live_music"
+        | "events"
+        | "hidden_gems"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +233,16 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      venue_category: [
+        "bars_nightlife",
+        "comedy",
+        "food_dining",
+        "places_to_stay",
+        "live_music",
+        "events",
+        "hidden_gems",
+      ],
+    },
   },
 } as const
