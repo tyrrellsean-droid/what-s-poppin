@@ -6,8 +6,9 @@ import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { MapPin, Loader2 } from "lucide-react";
+import { MapPin, Loader2, Calendar } from "lucide-react";
 import FireRating from "./FireRating";
+import BookingModal from "./BookingModal";
 import type { Tables } from "@/integrations/supabase/types";
 
 interface Review {
@@ -32,6 +33,7 @@ const VenueDetailModal = ({ venue, open, onOpenChange }: VenueDetailModalProps) 
   const [myRating, setMyRating] = useState(0);
   const [myComment, setMyComment] = useState("");
   const [existingReview, setExistingReview] = useState<Review | null>(null);
+  const [bookingModalOpen, setBookingModalOpen] = useState(false);
 
   useEffect(() => {
     if (venue && open) {
@@ -142,17 +144,27 @@ const VenueDetailModal = ({ venue, open, onOpenChange }: VenueDetailModalProps) 
   if (!venue) return null;
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg bg-card border-border max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="font-display text-xl">{venue.name}</DialogTitle>
-          {venue.address && (
-            <p className="text-sm text-muted-foreground flex items-center gap-1">
-              <MapPin className="w-3 h-3" />
-              {venue.address}
-            </p>
-          )}
-        </DialogHeader>
+    <>
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="sm:max-w-lg bg-card border-border max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="font-display text-xl">{venue.name}</DialogTitle>
+            {venue.address && (
+              <p className="text-sm text-muted-foreground flex items-center gap-1">
+                <MapPin className="w-3 h-3" />
+                {venue.address}
+              </p>
+            )}
+          </DialogHeader>
+
+          {/* Book Now Button */}
+          <Button
+            onClick={() => setBookingModalOpen(true)}
+            className="w-full gradient-fire text-primary-foreground"
+          >
+            <Calendar className="w-4 h-4 mr-2" />
+            Book Now 🔥
+          </Button>
 
         {/* Average Rating */}
         <div className="flex items-center gap-3 py-3 border-b border-border">
@@ -232,8 +244,15 @@ const VenueDetailModal = ({ venue, open, onOpenChange }: VenueDetailModalProps) 
             No reviews yet. Be the first!
           </p>
         )}
-      </DialogContent>
-    </Dialog>
+        </DialogContent>
+      </Dialog>
+
+      <BookingModal
+        venue={venue}
+        open={bookingModalOpen}
+        onOpenChange={setBookingModalOpen}
+      />
+    </>
   );
 };
 
