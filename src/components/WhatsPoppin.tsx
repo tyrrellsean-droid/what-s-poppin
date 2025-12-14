@@ -1,61 +1,93 @@
 import { useState } from "react";
-import { Wine, Laugh, UtensilsCrossed, Home, Music, Calendar, Compass, Sparkles } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Wine, Laugh, UtensilsCrossed, Home, Music, Calendar, Compass, Sparkles, User, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import FireButton from "./FireButton";
 import CategoryCard from "./CategoryCard";
 import { toast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
+import SubmitHiddenGemModal from "./SubmitHiddenGemModal";
 
 const categories = [
   {
     icon: Wine,
     title: "Bars & Nightlife",
     description: "Hottest spots in town",
+    key: "bars_nightlife",
   },
   {
     icon: Laugh,
     title: "Comedy",
     description: "Stand-up & improv shows",
+    key: "comedy",
   },
   {
     icon: UtensilsCrossed,
     title: "Food & Dining",
     description: "Local favorites & more",
+    key: "food_dining",
   },
   {
     icon: Home,
     title: "Places to Stay",
     description: "Airbnb & hotels",
+    key: "places_to_stay",
   },
   {
     icon: Music,
     title: "Live Music",
     description: "Concerts & gigs",
+    key: "live_music",
   },
   {
     icon: Calendar,
     title: "Events",
     description: "What's happening now",
+    key: "events",
   },
   {
     icon: Compass,
     title: "Off the Beaten Path",
     description: "Hidden gems & secrets",
+    key: "hidden_gems",
   },
   {
     icon: Sparkles,
     title: "Trending Now",
     description: "What's hot right now",
+    key: "trending",
   },
 ];
 
 const WhatsPoppin = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [showGemModal, setShowGemModal] = useState(false);
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
 
-  const handleCategoryClick = (category: string) => {
-    toast({
-      title: `🔥 ${category}`,
-      description: "Coming soon! Stay tuned for the hottest spots.",
-    });
+  const handleCategoryClick = (category: typeof categories[0]) => {
+    if (category.key === "hidden_gems") {
+      if (!user) {
+        toast({
+          title: "Sign in to share",
+          description: "Create an account to submit hidden gems.",
+        });
+        navigate("/auth");
+      } else {
+        setShowGemModal(true);
+      }
+    } else {
+      toast({
+        title: `🔥 ${category.title}`,
+        description: "Coming soon! Stay tuned for the hottest spots.",
+      });
+    }
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
+    toast({ title: "Signed out successfully" });
   };
 
   return (
@@ -64,6 +96,31 @@ const WhatsPoppin = () => {
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-fire-orange/10 rounded-full blur-3xl" />
         <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-fire-red/10 rounded-full blur-3xl" />
+      </div>
+
+      {/* Auth button */}
+      <div className="fixed top-4 right-4 z-50">
+        {user ? (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleSignOut}
+            className="border-border bg-card/50 backdrop-blur-sm"
+          >
+            <LogOut className="w-4 h-4 mr-2" />
+            Sign Out
+          </Button>
+        ) : (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => navigate("/auth")}
+            className="border-border bg-card/50 backdrop-blur-sm"
+          >
+            <User className="w-4 h-4 mr-2" />
+            Sign In
+          </Button>
+        )}
       </div>
 
       {/* Header */}
@@ -107,7 +164,7 @@ const WhatsPoppin = () => {
               description={category.description}
               delay={index * 80}
               isVisible={isOpen}
-              onClick={() => handleCategoryClick(category.title)}
+              onClick={() => handleCategoryClick(category)}
             />
           ))}
         </div>
@@ -119,6 +176,9 @@ const WhatsPoppin = () => {
           Tap the flame to close
         </p>
       )}
+
+      {/* Hidden Gem Submission Modal */}
+      <SubmitHiddenGemModal open={showGemModal} onOpenChange={setShowGemModal} />
     </div>
   );
 };

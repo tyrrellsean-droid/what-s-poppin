@@ -173,6 +173,7 @@ export type Database = {
           latitude: number
           longitude: number
           name: string
+          submitted_by: string | null
           traffic_count: number | null
           updated_at: string
         }
@@ -187,6 +188,7 @@ export type Database = {
           latitude: number
           longitude: number
           name: string
+          submitted_by?: string | null
           traffic_count?: number | null
           updated_at?: string
         }
@@ -201,6 +203,7 @@ export type Database = {
           latitude?: number
           longitude?: number
           name?: string
+          submitted_by?: string | null
           traffic_count?: number | null
           updated_at?: string
         }
