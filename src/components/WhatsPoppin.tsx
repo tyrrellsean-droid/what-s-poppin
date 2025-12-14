@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Wine, Laugh, UtensilsCrossed, Home, Music, Calendar } from "lucide-react";
+import { Wine, Laugh, UtensilsCrossed, Home, Music, Calendar, Compass, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import FireButton from "./FireButton";
 import CategoryCard from "./CategoryCard";
@@ -35,6 +35,16 @@ const categories = [
     icon: Calendar,
     title: "Events",
     description: "What's happening now",
+  },
+  {
+    icon: Compass,
+    title: "Off the Beaten Path",
+    description: "Hidden gems & secrets",
+  },
+  {
+    icon: Sparkles,
+    title: "Trending Now",
+    description: "What's hot right now",
   },
 ];
 
