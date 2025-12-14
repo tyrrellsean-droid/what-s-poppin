@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Wine, Laugh, UtensilsCrossed, Home, Music, Calendar, Compass, Sparkles, User, LogOut } from "lucide-react";
+import { Wine, Laugh, UtensilsCrossed, Home, Music, Calendar, Compass, Sparkles, User, LogOut, Mountain, Car } from "lucide-react";
 import { cn } from "@/lib/utils";
 import FireButton from "./FireButton";
 import CategoryCard from "./CategoryCard";
@@ -12,7 +12,7 @@ import CategoryVenuesModal from "./CategoryVenuesModal";
 import type { Database } from "@/integrations/supabase/types";
 import type { LucideIcon } from "lucide-react";
 
-type VenueCategory = Database["public"]["Enums"]["venue_category"];
+type VenueCategory = Database["public"]["Enums"]["venue_category"] | "off_road" | "on_road";
 
 interface Category {
   icon: LucideIcon;
@@ -63,6 +63,18 @@ const categories: Category[] = [
     title: "Off the Beaten Path",
     description: "Hidden gems & secrets",
     key: "hidden_gems",
+  },
+  {
+    icon: Mountain,
+    title: "Off-Road",
+    description: "Dirt bikes, ATVs & trails",
+    key: "off_road",
+  },
+  {
+    icon: Car,
+    title: "On-Road Racing",
+    description: "Drag races & hot rods",
+    key: "on_road",
   },
   {
     icon: Sparkles,
